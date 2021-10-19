@@ -1,50 +1,57 @@
-import React, { Component } from "react"
-import logo from "./logo.svg"
-import "./App.css"
+import React from "react";
+import { BrowserRouter as Router, Switch } from "react-router-dom";
+import AuthProvider from "contexts/auth";
+import CommonProvider from "contexts/common";
+import ProductsProvider from "contexts/products";
+import CartProvider from "contexts/cart";
+import CheckoutProvider from "contexts/checkout";
+import RouteWrapper from "layouts/RouteWrapper";
+import AuthLayout from "layouts/AuthLayout";
+import CommonLayout from "layouts/CommonLayout";
+import AuthPage from "pages/auth";
+import registation from "pages/regitation";
+import HomePage from "pages/home";
+import CheckoutPage from "pages/checkout";
+import "assets/scss/style.scss";
 
-class LambdaDemo extends Component {
-  constructor(props) {
-    super(props)
-    this.state = { loading: false, msg: null }
-  }
+const App = () => {
+  return (
+    <AuthProvider>
+      <CommonProvider>
+        <ProductsProvider>
+          <CartProvider>
+            <CheckoutProvider>
+              <Router>
+                <Switch>
+                  <RouteWrapper
+                    path="/"
+                    exact
+                    component={HomePage}
+                    layout={CommonLayout}
+                  />
+                  <RouteWrapper
+                    path="/checkout"
+                    component={CheckoutPage}
+                    layout={CommonLayout}
+                  />
+                  <RouteWrapper
+                    path="/auth"
+                    component={AuthPage}
+                    layout={AuthLayout}
+                  />
+                    <RouteWrapper
+                    path="/registation"
+                    component={registation}
+                    layout={AuthLayout}
+                  />
+                </Switch>
+              </Router>
+            </CheckoutProvider>
+          </CartProvider>
+        </ProductsProvider>
+      </CommonProvider>
+    </AuthProvider>
+  );
+};
 
-  handleClick = api => e => {
-    e.preventDefault()
-
-    this.setState({ loading: true })
-    fetch("/.netlify/functions/" + api)
-      .then(response => response.json())
-      .then(json => this.setState({ loading: false, msg: json.msg }))
-  }
-
-  render() {
-    const { loading, msg } = this.state
-
-    return (
-      <p>
-        <button onClick={this.handleClick("hello")}>{loading ? "Loading..." : "Call Lambda"}</button>
-        <button onClick={this.handleClick("async-dadjoke")}>{loading ? "Loading..." : "Call Async Lambda"}</button>
-        <br />
-        <span>{msg}</span>
-      </p>
-    )
-  }
-}
-
-class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <LambdaDemo />
-        </header>
-      </div>
-    )
-  }
-}
-
-export default App
+export default App;
